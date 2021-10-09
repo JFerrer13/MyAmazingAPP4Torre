@@ -16,7 +16,7 @@ It's to show my skills and what can I do for the company. I need to focus on the
 > It's given an API for the developement of the app and not much restricctions. So I create a plan of attack consisting of:
 > 1. Read, explore an understand
 > 2. Creat an idea
-> 3. Develope
+> 3. Develop
 > 4. Test
 
 You can read more further documentation on:
