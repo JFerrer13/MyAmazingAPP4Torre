@@ -20,7 +20,7 @@
           <div class="px-2 pt-2">
             <div class="flex">
               <div class="px-2 pt-2">
-                <button type="button" class="bg-gray-800 flex text-sm rounded-full outline-none ring-4 ring-offset-1 ring-offset-gray-800 ring-gray-500 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="openTorre()">
+                <button type="button" class="bg-gray-800 flex text-sm rounded-full outline-none ring-4 ring-offset-1 ring-offset-gray-800 ring-gray-500 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="displayGenome(item.username)">
                   <img class="img-adj rounded-full" :src="item.picture" alt="">
                 </button>
               </div>
@@ -32,7 +32,7 @@
             </div>
           </div>
           <div class="m-3 mb-0 text-right">
-            <button class="bg-green text-gray px-6 py-2 uppercase rounded-full border-2 border-gray font-bold shadow-md" @click="getPeople()">
+            <button class="bg-green text-gray px-6 py-2 uppercase rounded-full border-2 border-gray font-bold shadow-md" @click="displayGenome(item.username)">
               <i class="fas fa-dna mr-2" />
               genome
             </button>
@@ -88,6 +88,11 @@ export default {
       }
     }
   },
+  mounted () {
+    const bodyElement = document.querySelector('body')
+    bodyElement.classList.remove('bg-gray-800')
+    bodyElement.classList.add('bg-black')
+  },
   methods: {
     async getPeople (before, after) {
       const params = {
@@ -106,6 +111,9 @@ export default {
       parameters = parameters.substring(1, parameters.length)
       const data = await this.$axios.$post(`https://search.torre.co/people/_search?${parameters}`)
       this.data = data
+    },
+    displayGenome (username) {
+      this.$emit('sendUsername', username)
     }
   }
 }

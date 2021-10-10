@@ -39,7 +39,8 @@
       </div>
     </nav>
     <div class="">
-      <Search />
+      <Search v-if="show == 'Search'" @sendUsername="gotoUser($event)" />
+      <Genome v-if="show == 'User'" :username="username" @back="back()" />
     </div>
   </div>
 </template>
@@ -49,7 +50,9 @@ export default {
   data: () => ({
     tittle: 'Torre.co',
     current: 'Search',
-    user: null
+    user: null,
+    show: 'Search',
+    username: ''
   }),
   mounted () {
     const queryString = window.location.search
@@ -67,7 +70,14 @@ export default {
       this.user = data
     },
     openTorre () {
-      window.open('', '_blank')
+      window.open('https://torre.co', '_blank')
+    },
+    gotoUser (e) {
+      this.show = 'User'
+      this.username = e
+    },
+    back () {
+      this.show = 'Search'
     }
   }
 }
