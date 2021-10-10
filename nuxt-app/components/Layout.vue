@@ -29,7 +29,7 @@
             </div>
             <div class="ml-3 relative">
               <div>
-                <button type="button" class="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="openTorre()">
+                <button type="button" class="bg-gray-800 flex text-sm rounded-full outline-none ring-2 ring-offset-1 ring-offset-gray-800 ring-gray-500 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="openTorre()">
                   <img class="h-10 w-10 rounded-full" :src="user ? user.person.picture : null" alt="">
                 </button>
               </div>
@@ -89,5 +89,6 @@ export default {
   .img-adj{
     width: 64px;
     height: 64px;
+    max-width: none;
   }
 </style>
