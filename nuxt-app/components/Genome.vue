@@ -213,7 +213,7 @@ export default {
       if (mod === 99) {
         const params = {
           key: Number(this.key + this.muestra),
-          user: this.username,
+          username: this.username,
           x: e.clientX,
           y: e.clientY,
           vw,

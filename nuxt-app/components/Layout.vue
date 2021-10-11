@@ -17,11 +17,11 @@
                   <i class="block fas fa-book text-lg" />
                   About
                 </a>
-                <a href="#" class="w-16 text-gray-300 hover:bg-gray-900 hover:text-white px-3 py-2 text-xs font-sm text-center">
+                <a class="cursor-pointer w-16 text-gray-300 hover:bg-gray-900 hover:text-white px-3 py-2 text-xs font-sm text-center" @click="show='Search'">
                   <i class="block fas fa-user-friends text-lg" />
                   Search
                 </a>
-                <a href="#" class="w-16 text-gray-300 hover:bg-gray-900 hover:text-white px-3 py-2 text-xs font-sm text-center">
+                <a class="cursor-pointer w-16 text-gray-300 hover:bg-gray-900 hover:text-white px-3 py-2 text-xs font-sm text-center" @click="show='Data'">
                   <i class="block fas fa-database text-lg" />
                   Data
                 </a>
@@ -41,6 +41,7 @@
     <div class="">
       <Search v-if="show == 'Search'" @sendUsername="gotoUser($event)" />
       <Genome v-if="show == 'User'" :username="username" @back="back()" />
+      <Data v-if="show == 'Data' " @back="back()" />
     </div>
   </div>
 </template>
