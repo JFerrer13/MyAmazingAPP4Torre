@@ -190,24 +190,40 @@ export default {
     }
   },
   data: () => ({
-    user: null
+    user: null,
+    key: null,
+    contador: 0,
+    muestra: 0,
+    stop: true
   }),
   mounted () {
+    this.stop = false
+    this.key = (new Date()).getTime()
     this.getUserInfo()
     const bodyElement = document.querySelector('body')
     bodyElement.classList.remove('bg-black')
     bodyElement.classList.add('bg-gray-800')
     const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
     const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
-    onmousemove = function (e) {
-      const params = {
-        user: this.username,
-        x: e.clientX,
-        y: e.clientY,
-        vw,
-        vh
+    onmousemove = (e) => {
+      if (!this.stop) {
+        this.contador++
       }
-      JSON.stringify(params)
+      const mod = (this.contador % 100)
+      if (mod === 99) {
+        const params = {
+          key: Number(this.key + this.muestra),
+          user: this.username,
+          x: e.clientX,
+          y: e.clientY,
+          vw,
+          vh,
+          op: 1
+        }
+        this.saveTrack(params)
+        this.contador = 0
+        this.muestra++
+      }
     }
   },
   methods: {
@@ -215,10 +231,14 @@ export default {
       const data = await this.$axios.$get(`https://torre.bio/api/bios/${this.username}`)
       this.user = data
     },
+    async saveTrack (params) {
+      await this.$axios.$post('https://2lvvmaeuo4.execute-api.us-east-2.amazonaws.com/prod/mousetracking', params)
+    },
     getSourcer (text) {
       return text.replace('www.', '').substring(8, text.replace('www.', '').indexOf('.'))
     },
     back () {
+      this.stop = true
       this.$emit('back')
     }
   }
