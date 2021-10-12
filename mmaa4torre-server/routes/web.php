@@ -20,3 +20,19 @@ $router->get('/', function () use ($router) {
 $router->get('getUsers', [
     'as' => 'getUsers', 'uses' => 'UserController@getAll'
 ]);
+
+$router->post('insertUser', [
+    'as' => 'insertUser', 'uses' => 'UserController@insertUser'
+]);
+
+$router->get('getUserFromTorre/{user}', [
+    'as' => 'getUserFromTorre', 'uses' => 'UserController@getUserFromTorre'
+]);
+
+$router->post('searchPeopleFromTorre/{params}', [
+    'as' => 'searchPeopleFromTorre', 'uses' => 'UserController@searchPeopleFromTorre'
+]);
+
+$router->get('analyzeUsersData', [
+    'as' => 'analyzeUsersData', 'uses' => 'UserController@analyzeUsersData'
+]);

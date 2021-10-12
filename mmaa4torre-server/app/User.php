@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    protected $table = 'USERS_AVAILABLE';
+    protected $table = 'Users_available';
     protected $fillable = [
-        'USERNAME',
-        'NAME'
+        'username',
+        'name'
     ];
 }
