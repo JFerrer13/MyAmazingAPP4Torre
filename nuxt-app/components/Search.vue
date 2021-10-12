@@ -3,7 +3,7 @@
     <div class="max-w-3xl mx-auto px-2 sm:px-6 lg:px-8">
       <div class="grid grid-cols-2">
         <div class="">
-          <h2 class="text-white">
+          <h2 class="text-white mt-2">
             Our first step it's to retrieves data
           </h2>
         </div>
@@ -16,27 +16,46 @@
       </div>
       <div class="mt-10">
         <!--the search cards -->
-        <div v-for="(item,index) in people" :key="index" class="bg-gray-800 pb-3 my-3">
-          <div class="px-2 pt-2">
-            <div class="flex">
-              <div class="px-2 pt-2">
-                <button type="button" class="bg-gray-800 flex text-sm rounded-full outline-none ring-4 ring-offset-1 ring-offset-gray-800 ring-gray-500 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="displayGenome(item.username)">
-                  <img class="img-adj rounded-full" :src="item.picture" alt="">
-                </button>
-              </div>
-              <div class="w-10/12 ml-3">
-                <a class="text-green text-xl" v-text="item.name" />
-                <p class="text-gray-300 truncate" v-text="item.professionalHeadline" />
-                <p class="text-gray-300 text-sm" v-text="item.locationName" />
+        <div v-if="people.length">
+          <div v-for="(item,index) in people" :key="index" class="bg-gray-800 pb-3 my-3">
+            <div class="px-2 pt-2">
+              <div class="flex">
+                <div class="px-2 pt-2">
+                  <button type="button" class="bg-gray-800 flex text-sm rounded-full outline-none ring-4 ring-offset-1 ring-offset-gray-800 ring-gray-500 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="displayGenome(item.username)">
+                    <img class="img-adj rounded-full" :src="item.picture" alt="">
+                  </button>
+                </div>
+                <div class="w-10/12 ml-3">
+                  <a class="text-green text-xl" v-text="item.name" />
+                  <p class="text-gray-300 truncate" v-text="item.professionalHeadline" />
+                  <p class="text-gray-300 text-sm" v-text="item.locationName" />
+                </div>
               </div>
             </div>
+            <div class="m-3 mb-0 text-right">
+              <button class="bg-green text-gray px-6 py-2 uppercase rounded-full border-2 border-gray font-bold shadow-md" @click="displayGenome(item.username)">
+                <i class="fas fa-dna mr-2" />
+                genome
+              </button>
+            </div>
           </div>
-          <div class="m-3 mb-0 text-right">
-            <button class="bg-green text-gray px-6 py-2 uppercase rounded-full border-2 border-gray font-bold shadow-md" @click="displayGenome(item.username)">
-              <i class="fas fa-dna mr-2" />
-              genome
-            </button>
-          </div>
+        </div>
+        <div v-else class="bg-gray-800 my-3 px-10 py-16">
+          <h2 class="text-green text-3xl text-center">
+            Welcome
+          </h2>
+          <p class="text-gray-300 py-3">
+            The App searches people using the API endpoints provided. Then it displays the profile information about the chosen user. While you are interacting with the genome we are tracking the mouse position. With the information collected it's been built the heatmap of usage. Hope you enjoy it!. If you have any question please email me <a href="mailto:13ferrer@gmial.com" class="text-green hover:text-gray-500 cursor-pointer">13ferrer@gmail.com</a>
+          </p>
+          <p class="text-gray-300 py-3">
+            Click on <span class="text-green">About</span> to read the fool documentation.
+          </p>
+          <p class="text-gray-300 py-3">
+            Choose the <span class="text-green">Search</span> option to return to this page and search people again.
+          </p>
+          <p class="text-gray-300 py-3">
+            Click on <span class="text-green">Data</span> to check out the heatmap of the genome page usage.
+          </p>
         </div>
       </div>
       <div v-if="data" class="my-5 text-center">
@@ -109,7 +128,7 @@ export default {
         }
       }
       parameters = parameters.substring(1, parameters.length)
-      const data = await this.$axios.$post(`https://search.torre.co/people/_search?${parameters}`)
+      const data = await this.$axios.$post(`http://164.90.146.112/searchPeopleFromTorre/${parameters}`)
       this.data = data
     },
     displayGenome (username) {

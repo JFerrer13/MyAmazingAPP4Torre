@@ -194,7 +194,8 @@ export default {
     key: null,
     contador: 0,
     muestra: 0,
-    stop: true
+    stop: true,
+    sampleFreq: 50
   }),
   mounted () {
     this.stop = false
@@ -209,8 +210,8 @@ export default {
       if (!this.stop) {
         this.contador++
       }
-      const mod = (this.contador % 100)
-      if (mod === 99) {
+      const mod = (this.contador % this.sampleFreq)
+      if (mod === (this.sampleFreq - 1)) {
         const params = {
           key: Number(this.key + this.muestra),
           username: this.username,
@@ -228,7 +229,7 @@ export default {
   },
   methods: {
     async getUserInfo () {
-      const data = await this.$axios.$get(`https://torre.bio/api/bios/${this.username}`)
+      const data = await this.$axios.$get(`http://164.90.146.112/getUserFromTorre/${this.username}`)
       this.user = data
     },
     async saveTrack (params) {
