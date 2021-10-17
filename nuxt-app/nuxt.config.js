@@ -7,7 +7,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'My Amazing App 4 torre',
+    title: 'Heatmap 4 torre',
     htmlAttrs: {
       lang: 'en'
     },
@@ -52,5 +52,11 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+  },
+
+  env: {
+    serverUrl: 'http://164.90.146.112',
+    awsUrl: 'https://2lvvmaeuo4.execute-api.us-east-2.amazonaws.com/prod',
+    docsUrl: 'https://possible-drawer-6c0.notion.site/My-Amazing-APP-for-Torre-ed86b39f878449e0aec4e5d230acbca9'
   }
 }

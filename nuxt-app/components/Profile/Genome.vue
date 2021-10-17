@@ -64,7 +64,7 @@
 </template>
 <script>
 import html2canvas from 'html2canvas'
-import GenomeAbout from './Genome-about.vue'
+import GenomeAbout from '../Profile/Genome-about.vue'
 
 export default {
   components: { GenomeAbout },
@@ -75,12 +75,14 @@ export default {
     }
   },
   data: () => ({
+    serverUrl: process.env.serverUrl,
+    awsUrl: process.env.awsUrl,
     user: null,
     key: null,
     contador: 0,
     muestra: 0,
     stop: true,
-    sampleFreq: 100,
+    sampleFreq: 10,
     tab: 'about',
     needScreenshot: false
   }),
@@ -113,6 +115,7 @@ export default {
         const params = {
           key: this.key + '|' + this.muestra,
           username: this.username,
+          name: this.user.person.name,
           x: e.clientX,
           y: e.clientY,
           vw,
@@ -128,11 +131,11 @@ export default {
   },
   methods: {
     async getUserInfo () {
-      const data = await this.$axios.$get(`http://164.90.146.112/getUserFromTorre/${this.username}`)
+      const data = await this.$axios.$get(`${this.serverUrl}/getUserFromTorre/${this.username}`)
       this.user = data
     },
     async saveTrack (params) {
-      await this.$axios.$post('https://2lvvmaeuo4.execute-api.us-east-2.amazonaws.com/prod/mousetracking', params)
+      await this.$axios.$post(`${this.awsUrl}/mousetracking`, params)
     },
     back () {
       this.stop = true
@@ -153,7 +156,7 @@ export default {
         img: dataURL,
         tab: this.tab
       }
-      await this.$axios.$post('http://164.90.146.112/SaveImage/', params).catch(() => {
+      await this.$axios.$post(`${this.serverUrl}/SaveImage/`, params).catch(() => {
         this.pushAlert({
           title: 'Ups!',
           text: 'There was an error saving screenshot',

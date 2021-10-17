@@ -13,7 +13,7 @@
           <div class="right-0 flex items-center static inset-auto ml-6">
             <div class="block ml-6">
               <div class="flex space-x-4">
-                <a href="https://possible-drawer-6c0.notion.site/My-Amazing-APP-for-Torre-ed86b39f878449e0aec4e5d230acbca9" class="w-16 text-gray-300 hover:bg-gray-900 hover:text-white px-3 py-2 text-xs font-sm text-center" target="_blank">
+                <a :href="docsUrl" class="w-16 text-gray-300 hover:bg-gray-900 hover:text-white px-3 py-2 text-xs font-sm text-center" target="_blank">
                   <i class="block fas fa-book text-lg" />
                   About
                 </a>
@@ -63,6 +63,9 @@
 
 export default {
   data: () => ({
+    serverUrl: process.env.serverUrl,
+    awsUrl: process.env.awsUrl,
+    docsUrl: process.env.docsUrl,
     tittle: 'Torre.co',
     current: 'Search',
     user: null,
@@ -82,7 +85,7 @@ export default {
   },
   methods: {
     async getUser (user) {
-      const data = await this.$axios.$get(`http://164.90.146.112/getUserFromTorre/${user}`)
+      const data = await this.$axios.$get(`${this.serverUrl}/getUserFromTorre/${user}`)
       this.user = data
     },
     openTorre () {

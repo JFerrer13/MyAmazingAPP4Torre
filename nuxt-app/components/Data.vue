@@ -49,8 +49,8 @@
         </div>
       </div>
       <div class="w-full flex flex-wrap justify-center mt-10">
-        <div v-if="vh !== 0 && vw !== 0" class="flex justify-center pb-5">
-          <a class="cursor-pointer relative inline-flex items-center px-3 bg-gray-800 py-2 rounded-full text-sm font-medium text-white hover:bg-gray-700 mr-2" @click="clear()">
+        <div v-if="vh !== 0 && vw !== 0" class="flex justify-center">
+          <a class="cursor-pointer relative inline-flex items-center px-3 bg-gray-800 py-2 rounded-full text-sm font-medium text-white hover:bg-gray-700" @click="clear()">
             <i :class="'fas fa-times pr-2'" /> Clear canvas
           </a>
           <a class="hidden cursor-pointer relative inline-flex items-center px-3 bg-gray-800 py-2 rounded-full text-sm font-medium text-white hover:bg-gray-700" @click="play()">
@@ -71,6 +71,8 @@
 <script>
 export default {
   data: () => ({
+    serverUrl: process.env.serverUrl,
+    awsUrl: process.env.awsUrl,
     data: null,
     users: [],
     usrStats: null,
@@ -79,7 +81,7 @@ export default {
     vw: 0,
     upd: false,
     drawCanvas: false,
-    heatmapPressition: 64,
+    heatmapPressition: 32,
     grid: null
   }),
   updated () {
@@ -120,7 +122,7 @@ export default {
   },
   methods: {
     async getUsers () {
-      const datos = await this.$axios.$get('http://164.90.146.112/getUsers')
+      const datos = await this.$axios.$get(`${this.serverUrl}/getUsers`)
       this.data = datos
       this.users = []
       for (let i = 0; i < this.data.length; i++) {
@@ -138,7 +140,7 @@ export default {
         return -1
       }
       this.usrStats = []
-      let datos = await this.$axios.$post('https://2lvvmaeuo4.execute-api.us-east-2.amazonaws.com/prod/mousetracking')
+      let datos = await this.$axios.$post(`${this.awsUrl}/mousetracking`)
       if (!datos) {
         this.pushAlert({
           title: 'Warning',
@@ -158,7 +160,7 @@ export default {
       this.clear()
     },
     async updUSers () {
-      await this.$axios.$get('http://164.90.146.112/analyzeUsersData')
+      await this.$axios.$get(`${this.serverUrl}/analyzeUsersData`)
       this.getUsers()
       this.pushAlert({
         title: 'Success',
@@ -243,7 +245,7 @@ export default {
     getColor (value, maxValue) {
       let lowerLimit = 0
       let upperLimit = 0
-      const colors = ['rgba(69, 13, 84, 0.1)', 'rgba(68, 58, 131, 0.3)', 'rgba(48, 104, 142, 0.4)', 'rgba(34, 144, 140, 0.4)', 'rgba(53, 183, 121, 0.5)', 'rgba(143, 215, 68, 0.5)', 'rgba(253, 231, 37, 0.6)']
+      const colors = ['rgba(69, 13, 84, 0.1)', 'rgba(68, 58, 131, 0.5)', 'rgba(48, 104, 142, 0.5)', 'rgba(34, 144, 140, 0.5)', 'rgba(53, 183, 121, 0.5)', 'rgba(143, 215, 68, 0.6)', 'rgba(253, 231, 37, 0.6)']
       if (maxValue > 8) {
         maxValue = 7
       }
