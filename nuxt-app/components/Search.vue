@@ -83,6 +83,7 @@ import SearchCbo from './Search-cbo.vue'
 export default {
   components: { SearchCbo },
   data: () => ({
+    serverUrl: process.env.serverUrl,
     data: null,
     srchTern: '',
     size: 20,
@@ -133,13 +134,11 @@ export default {
         }
         if (this.srchTern) {
           params = {
-            name: {
-              term: this.srchTern
-            }
+            name: this.srchTern
           }
         }
         parameters = parameters.substring(1, parameters.length)
-        const data = await this.$axios.$post(`http://164.90.146.112/searchPeopleFromTorre/${parameters}`, params).catch(() => {
+        const data = await this.$axios.$post(`${this.serverUrl}/searchPeopleFromTorre/${parameters}`, params).catch(() => {
           this.pushAlert({
             title: 'Ups!',
             text: 'Seems like the server is not responding. Please refresh the page.',

@@ -65,9 +65,10 @@
 <script>
 import html2canvas from 'html2canvas'
 import GenomeAbout from '../Profile/Genome-about.vue'
+import GenomeReputation from '../Profile/Genome-reputation.vue'
 
 export default {
-  components: { GenomeAbout },
+  components: { GenomeAbout, GenomeReputation },
   props: {
     username: {
       type: String,
@@ -147,20 +148,20 @@ export default {
       this.needScreenshot = true
     },
     async takeScreenshot () {
-      const dataURL = await html2canvas(document.body).then((canvas) => {
-        return canvas.toDataURL()
-      })
-      const params = {
-        user: this.username,
-        key: this.key,
-        img: dataURL,
-        tab: this.tab
-      }
-      await this.$axios.$post(`${this.serverUrl}/SaveImage/`, params).catch(() => {
-        this.pushAlert({
-          title: 'Ups!',
-          text: 'There was an error saving screenshot',
-          color: 'yellow'
+      await html2canvas(document.body).then((canvas) => {
+        canvas.toBlob((blob) => {
+          const formData = new FormData()
+          formData.append('image', blob, 'filename.png')
+          formData.append('user', this.username)
+          formData.append('key', this.key)
+          formData.append('tab', this.tab)
+          this.$axios.post(`${this.serverUrl}/saveImage`, formData).catch(() => {
+            this.pushAlert({
+              title: 'Ups!',
+              text: 'There was an error saving screenshot',
+              color: 'yellow'
+            })
+          })
         })
       })
     },

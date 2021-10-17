@@ -22,24 +22,16 @@
       <div class="pb-7 text-gray-400">
         Please choose a user to show the analyzed data.
       </div>
-      <div class="grid grid-cols-3">
-        <div class="mr-5">
-          <div class="block flex flex-1 ">
+      <div class="grid grid-cols-2">
+        <div class="">
+          <div class="block">
             <select v-model="srchUser" class="cursor-pointer bg-gray-800 text-gray-300 form-select leading-snug w-full pl-5 pr-6 text-base placeholder-gray-400 border rounded-full appearance-none py-2" @change="getData()">
               <option value="-1" readonly>
                 Choose a user
               </option>
-              <option v-for="(item,index) in users" :key="index" :value="item" v-text="item" />
+              <option v-for="(item,index) in users" :key="index" :value="index" v-text="item.username" />
             </select>
           </div>
-        </div>
-        <div class="mr-5">
-          <span class="text-gray-300 hidden">IP</span>
-          <select class="cursor-pointer bg-gray-800 text-gray-300 form-select block w-full mt-1 h-10 pl-3 pr-6 text-base placeholder-gray-400 border rounded-lg appearance-none focus:shadow-outline hidden">
-            <option value="-1" readonly>
-              Choose a IP
-            </option>
-          </select>
         </div>
         <div class="text-right">
           <button class="bg-green text-gray px-6 py-2 uppercase rounded-full border-2 border-gray font-bold shadow-md  shadow-lg" @click="displayMAp()">
@@ -51,7 +43,7 @@
       <div class="w-full flex flex-wrap justify-center mt-10">
         <div v-if="vh !== 0 && vw !== 0" class="flex justify-center">
           <a class="cursor-pointer relative inline-flex items-center px-3 bg-gray-800 py-2 rounded-full text-sm font-medium text-white hover:bg-gray-700" @click="clear()">
-            <i :class="'fas fa-times pr-2'" /> Clear canvas
+            <i :class="'fas fa-trash pr-2'" /> Clear canvas
           </a>
           <a class="hidden cursor-pointer relative inline-flex items-center px-3 bg-gray-800 py-2 rounded-full text-sm font-medium text-white hover:bg-gray-700" @click="play()">
             show data <i :class="'fas fa-play pl-2'" />
@@ -62,7 +54,15 @@
           <span class="text-xs text-gray-400 text-right">Higher</span>
           <div class="col-span-2 p-3 my-2 heat-gradient w-full" />
         </div>
-        <canvas class="w-full" :height="vh" :width="vw" :data-update="upd" />
+        <div class="relative">
+          <canvas class="w-full" :height="vh" :width="vw" :data-update="upd" />
+          <div v-if="float" class="absolute bottom-0 left-0 bg-black bg-opacity-60 px-5 py-3 m-3 text-gray-300 text-xs">
+            <p v-text="users[srchUser].name" />
+            <p v-text="users[srchUser].username" />
+            <p v-text="users[srchUser].key" />
+            <p v-text="getDate(users[srchUser].key)" />
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -71,6 +71,7 @@
 <script>
 export default {
   data: () => ({
+    imgURL: process.env.imgURL,
     serverUrl: process.env.serverUrl,
     awsUrl: process.env.awsUrl,
     data: null,
@@ -82,36 +83,20 @@ export default {
     upd: false,
     drawCanvas: false,
     heatmapPressition: 32,
-    grid: null
+    grid: null,
+    float: false
   }),
   updated () {
     if (this.drawCanvas) {
       const canvas = document.querySelector('canvas')
       if (canvas) {
-        const toShow = this.usrStats
-        this.vh = toShow[0].vh
-        this.vw = toShow[0].vw
-        const baseImage = new Image(this.vw, this.vh)
-        baseImage.src = '/prev.jpg'
-        baseImage.addEventListener('load', (e) => {
-          const context = canvas.getContext('2d')
-          context.drawImage(baseImage, 0, 0, this.vw, this.vh)
-          this.drawCanvas = false
-          const maxValue = this.tempfunc()
-          if (!this.gridDrawn) {
-            const hight = Math.trunc(this.vh / this.heatmapPressition)
-            const width = Math.trunc(this.vw / this.heatmapPressition)
-            for (let yAxis = 0; yAxis < this.grid.length; yAxis++) {
-              for (let xAxis = 0; xAxis < this.grid[yAxis].length; xAxis++) {
-                const yPsition = Math.trunc(yAxis * this.vh / this.heatmapPressition)
-                const xPsition = Math.trunc(xAxis * this.vw / this.heatmapPressition)
-                context.fillRect(xPsition, yPsition, width, hight)
-                context.fillStyle = this.getColor(this.grid[yAxis][xAxis], maxValue)
-                context.fill()
-              }
-            }
-          }
-        })
+        if (this.usrStats) {
+          this.draw(canvas)
+        } else {
+          this.$nextTick(() => {
+            this.draw(canvas)
+          })
+        }
       } else {
         this.upd = !this.upd
       }
@@ -127,10 +112,15 @@ export default {
       this.users = []
       for (let i = 0; i < this.data.length; i++) {
         const element = this.data[i]
-        this.users.push(element.username)
+        this.users.push({
+          username: element.username,
+          key: element.key.split('|')[0],
+          name: element.name
+        })
       }
     },
     async getData () {
+      this.float = false
       if (Number(this.srchUser) === -1) {
         this.pushAlert({
           title: 'Warning',
@@ -153,7 +143,7 @@ export default {
       for (let i = 0; i < datos.length; i++) {
         const element = datos[i]
         const type = typeof element
-        if (type !== 'undefined' && element.username === this.srchUser) {
+        if (type !== 'undefined' && element.username === this.users[this.srchUser].username) {
           this.usrStats.push(element)
         }
       }
@@ -169,6 +159,7 @@ export default {
       })
     },
     displayMAp () {
+      this.float = false
       if (Number(this.srchUser) === -1) {
         this.pushAlert({
           title: 'Warning',
@@ -197,13 +188,16 @@ export default {
       })
     },
     clear () {
+      this.float = false
       const canvas = document.querySelector('canvas')
-      const context = canvas.getContext('2d')
-      const baseImage = new Image()
-      context.clearRect(0, 0, this.vw, this.vh)
-      baseImage.src = '/prev.jpg'
-      context.drawImage(baseImage, 0, 0, 0, 0)
-      context.fill()
+      if (canvas) {
+        const context = canvas.getContext('2d')
+        const baseImage = new Image()
+        context.clearRect(0, 0, this.vw, this.vh)
+        baseImage.src = '/prev.jpg'
+        context.drawImage(baseImage, 0, 0, 0, 0)
+        context.fill()
+      }
     },
     back () {
       this.stop = true
@@ -212,7 +206,8 @@ export default {
     pushAlert (element) {
       this.$emit('newalert', element)
     },
-    tempfunc () {
+    calcSizes () {
+      this.float = false
       if (!this.vw) {
         return -1
       }
@@ -261,6 +256,41 @@ export default {
           return colors[i]
         }
       }
+    },
+    draw (canvas) {
+      const toShow = this.usrStats
+      if (!toShow[0]) {
+        return -1
+      }
+      this.vh = toShow[0].vh
+      this.vw = toShow[0].vw
+      const baseImage = new Image(this.vw, this.vh)
+      baseImage.src = `${this.imgURL}U-${this.users[this.srchUser].key}.png`
+      baseImage.addEventListener('load', (e) => {
+        const context = canvas.getContext('2d')
+        context.drawImage(baseImage, 0, 0, this.vw, this.vh)
+        this.drawCanvas = false
+        const maxValue = this.calcSizes()
+        if (!this.gridDrawn) {
+          const hight = Math.trunc(this.vh / this.heatmapPressition)
+          const width = Math.trunc(this.vw / this.heatmapPressition)
+          for (let yAxis = 0; yAxis < this.grid.length; yAxis++) {
+            for (let xAxis = 0; xAxis < this.grid[yAxis].length; xAxis++) {
+              const yPsition = Math.trunc(yAxis * this.vh / this.heatmapPressition)
+              const xPsition = Math.trunc(xAxis * this.vw / this.heatmapPressition)
+              context.fillRect(xPsition, yPsition, width, hight)
+              context.fillStyle = this.getColor(this.grid[yAxis][xAxis], maxValue)
+              context.fill()
+            }
+          }
+          this.float = true
+        }
+      })
+    },
+    getDate (dateKey) {
+      dateKey = Number(dateKey)
+      const date = new Date(dateKey)
+      return `${date.getMonth()}-${date.getDate()}-${date.getFullYear()}`
     }
   }
 }

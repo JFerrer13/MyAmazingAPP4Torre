@@ -60,8 +60,12 @@
   </div>
 </template>
 <script>
+import Genome from './Profile/Genome.vue'
 
 export default {
+  components: {
+    Genome
+  },
   data: () => ({
     serverUrl: process.env.serverUrl,
     awsUrl: process.env.awsUrl,
