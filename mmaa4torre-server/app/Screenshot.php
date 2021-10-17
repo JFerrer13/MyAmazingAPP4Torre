@@ -4,12 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class Screenshot extends Model
 {
-    protected $table = 'Users_available';
+    protected $table = 'Screenshot_users';
     protected $fillable = [
         'username',
-        'name',
-        'key'
+        'img',
+        'key',
+        'tab'
     ];
 }

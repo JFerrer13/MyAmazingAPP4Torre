@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UsersAvailable extends Migration
+class ScreenshotsUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class UsersAvailable extends Migration
      */
     public function up()
     {
-        Schema::create('Users_available', function (Blueprint $table) {
+        Schema::create('Screenshot_users', function (Blueprint $table) {
             $table->id();
             $table->string('username');
-            $table->string('name');
+            $table->string('img');
             $table->string('key');
+            $table->string('tab');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class UsersAvailable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('Users_available');
+        Schema::dropIfExists('Screenshot_users');
     }
 }

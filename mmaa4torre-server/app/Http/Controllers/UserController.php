@@ -50,10 +50,14 @@ class UserController extends Controller
         return json_decode($data, true);
     }
 
-    public function searchPeopleFromTorre($params, Request $request)
+    public function searchPeopleFromTorre(Request $request, $params)
     {
         $name = $request->input('name');
-        $data = $this->apiSearchTorre->post('people/_search?'.$params, ['json' => ['name' => ['term' => $name]]])->getBody();
+        if (isset($name)) {
+            $data = $this->apiSearchTorre->post('people/_search?'.$params, ['json' => ['name' => ['term' => $name]]])->getBody();
+        } else {
+            $data = $this->apiSearchTorre->post('people/_search?'.$params)->getBody();
+        }
         
         return json_decode($data, true);
     }
@@ -65,15 +69,20 @@ class UserController extends Controller
         $tempUsers = [];
         foreach ($Response as $row => $value){
             if(isset($Response[$row]->username)){
-                $tempUsers[$Response[$row]->username] = 1;
+                $tempUsers[$Response[$row]->username] = [
+                    'name' => $Response[$row]->name,
+                    'key'=> $Response[$row]->key
+                ];
             }
         }
         User::truncate();
         foreach ($tempUsers as $key => $value) {
             $variable = [
                 'username' => $key,
-                'name' => $key
+                'name' => $value["name"],
+                'key' => $value["key"]
             ];
+
             User::create($variable);
         }
         return response()->json([

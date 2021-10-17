@@ -13,6 +13,7 @@
 
 $app = require __DIR__.'/../bootstrap/app.php';
 
+header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token , Authorization');
 header('Access-Control-Allow-Headers: Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, googletoken, versionApp');
 header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
 header('Access-Control-Allow-Origin: *');

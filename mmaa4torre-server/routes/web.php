@@ -36,3 +36,11 @@ $router->post('searchPeopleFromTorre/{params}', [
 $router->get('analyzeUsersData', [
     'as' => 'analyzeUsersData', 'uses' => 'UserController@analyzeUsersData'
 ]);
+
+$router->post('saveImage', [
+    'as' => 'insertScreenshot', 'uses' => 'ScreenshotController@insertScreenshot'
+]);
+
+$router->get('getImage/{key}', function () {
+    return asset('upload/sceenshot/U-' . $key->image . ".png");
+});
