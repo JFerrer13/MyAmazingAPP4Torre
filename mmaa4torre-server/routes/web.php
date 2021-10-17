@@ -40,7 +40,3 @@ $router->get('analyzeUsersData', [
 $router->post('saveImage', [
     'as' => 'insertScreenshot', 'uses' => 'ScreenshotController@insertScreenshot'
 ]);
-
-$router->get('getImage/{key}', function () {
-    return asset('upload/sceenshot/U-' . $key->image . ".png");
-});

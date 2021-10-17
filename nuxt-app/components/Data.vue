@@ -286,6 +286,27 @@ export default {
           this.float = true
         }
       })
+      baseImage.src = '/prev.jpg'
+      baseImage.addEventListener('error', (e) => {
+        const context = canvas.getContext('2d')
+        context.drawImage(baseImage, 0, 0, this.vw, this.vh)
+        this.drawCanvas = false
+        const maxValue = this.calcSizes()
+        if (!this.gridDrawn) {
+          const hight = Math.trunc(this.vh / this.heatmapPressition)
+          const width = Math.trunc(this.vw / this.heatmapPressition)
+          for (let yAxis = 0; yAxis < this.grid.length; yAxis++) {
+            for (let xAxis = 0; xAxis < this.grid[yAxis].length; xAxis++) {
+              const yPsition = Math.trunc(yAxis * this.vh / this.heatmapPressition)
+              const xPsition = Math.trunc(xAxis * this.vw / this.heatmapPressition)
+              context.fillRect(xPsition, yPsition, width, hight)
+              context.fillStyle = this.getColor(this.grid[yAxis][xAxis], maxValue)
+              context.fill()
+            }
+          }
+          this.float = true
+        }
+      })
     },
     getDate (dateKey) {
       dateKey = Number(dateKey)

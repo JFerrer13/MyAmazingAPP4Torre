@@ -44,7 +44,7 @@
           <Genome-reputation :user="user" />
         </div>
       </div>
-      <div class="grid sm:block md:hidden">
+      <div class="grid sm:block md:hidden cursor-pointer">
         <div v-if="tab == 'about'">
           <div class="bg-gray-800 genome-column text-gray-100">
             <Genome-about :user="user" />
@@ -155,13 +155,7 @@ export default {
           formData.append('user', this.username)
           formData.append('key', this.key)
           formData.append('tab', this.tab)
-          this.$axios.post(`${this.serverUrl}/saveImage`, formData).catch(() => {
-            this.pushAlert({
-              title: 'Ups!',
-              text: 'There was an error saving screenshot',
-              color: 'yellow'
-            })
-          })
+          this.$axios.post(`${this.serverUrl}/saveImage`, formData)
         })
       })
     },
