@@ -1,22 +1,15 @@
 <template>
   <section class="py-10">
     <div class="max-w-3xl mx-auto px-2 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-2">
-        <div class="">
-          <h2 class="text-white mt-2">
-            Our first step it's to retrieves data
-          </h2>
-        </div>
-        <div class="text-right">
-          <button class="bg-green text-gray px-6 py-2 uppercase rounded-full border-2 border-gray font-bold" @click="getPeople()">
-            <i class="fas fa-database mr-2" />
-            Get data
-          </button>
-        </div>
+      <div class="flex">
+        <Search-cbo caption="Search people by name" @search="setSrchTern($event)" />
       </div>
       <div class="mt-10">
+        <div v-if="loading" class="text-gray-400 text-xl text-center">
+          <i class="fas fa-circle-notch animate-spin" />
+        </div>
         <!--the search cards -->
-        <div v-if="people.length">
+        <div v-else-if="people.length">
           <div v-for="(item,index) in people" :key="index" class="bg-gray-800 pb-3 my-3">
             <div class="px-2 pt-2">
               <div class="flex">
@@ -25,7 +18,7 @@
                     <img class="img-adj rounded-full" :src="item.picture" alt="">
                   </button>
                 </div>
-                <div class="w-10/12 ml-3">
+                <div class="w-9/12 md:w-10/12 ml-3">
                   <a class="text-green text-xl" v-text="item.name" />
                   <p class="text-gray-300 truncate" v-text="item.professionalHeadline" />
                   <p class="text-gray-300 text-sm" v-text="item.locationName" />
@@ -51,14 +44,14 @@
             Click on <span class="text-green">About</span> to read the fool documentation.
           </p>
           <p class="text-gray-300 py-3">
-            Choose the <span class="text-green">Search</span> option to return to this page and search people again.
+            Choose the <span class="text-green">Search</span> option to return to this page to search people again.
           </p>
           <p class="text-gray-300 py-3">
             Click on <span class="text-green">Data</span> to check out the heatmap of the genome page usage.
           </p>
         </div>
       </div>
-      <div v-if="data" class="my-5 text-center">
+      <div v-if="data && !loading" class="my-5 text-center">
         <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
           <a v-if="data.pagination.previous" href="#" class="relative inline-flex items-center px-2 py-2 rounded-full hover:bg-gray-800 text-sm font-medium text-green hover:bg-gray-50" @click="getPeople(data.pagination.previous, null)">
             <span class="sr-only">Previous</span>
@@ -86,10 +79,14 @@
 </template>
 
 <script>
+import SearchCbo from './Search-cbo.vue'
 export default {
+  components: { SearchCbo },
   data: () => ({
     data: null,
-    size: 20
+    srchTern: '',
+    size: 20,
+    loading: false
   }),
   computed: {
     people () {
@@ -113,26 +110,51 @@ export default {
     bodyElement.classList.add('bg-black')
   },
   methods: {
+    setSrchTern (tern) {
+      this.srchTern = tern
+      this.getPeople()
+    },
     async getPeople (before, after) {
-      const params = {
-        lang: 'en',
-        size: this.size,
-        aggregate: false,
-        before,
-        after
-      }
-      let parameters = ''
-      for (const key in params) {
-        if (params[key] !== null && params[key] !== undefined) {
-          parameters += `&${key}=${params[key]}`
+      if (!this.loading) {
+        let params = null
+        let parameters = ''
+        const paramsUrl = {
+          lang: 'en',
+          size: this.size,
+          aggregate: false,
+          before,
+          after
         }
+        this.loading = true
+        for (const key in paramsUrl) {
+          if (paramsUrl[key] !== null && paramsUrl[key] !== undefined) {
+            parameters += `&${key}=${paramsUrl[key]}`
+          }
+        }
+        if (this.srchTern) {
+          params = {
+            name: {
+              term: this.srchTern
+            }
+          }
+        }
+        parameters = parameters.substring(1, parameters.length)
+        const data = await this.$axios.$post(`http://164.90.146.112/searchPeopleFromTorre/${parameters}`, params).catch(() => {
+          this.pushAlert({
+            title: 'Ups!',
+            text: 'Seems like the server is not responding. Please refresh the page.',
+            color: 'yellow'
+          })
+        })
+        this.data = data
+        this.loading = false
       }
-      parameters = parameters.substring(1, parameters.length)
-      const data = await this.$axios.$post(`http://164.90.146.112/searchPeopleFromTorre/${parameters}`)
-      this.data = data
     },
     displayGenome (username) {
       this.$emit('sendUsername', username)
+    },
+    pushAlert (element) {
+      this.$emit('newalert', element)
     }
   }
 }

@@ -3,15 +3,15 @@
     <nav class="bg-gray-800 border-b border-gray-600">
       <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div class="relative flex items-center justify-between">
-          <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+          <div class="flex-1 flex items-stretch justify-start">
             <div class="flex-shrink-0 flex items-center">
               <h1 class="text-white text-2xl">
                 torre
               </h1>
             </div>
           </div>
-          <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <div class="hidden sm:block sm:ml-6">
+          <div class="right-0 flex items-center static inset-auto ml-6">
+            <div class="block ml-6">
               <div class="flex space-x-4">
                 <a href="https://possible-drawer-6c0.notion.site/My-Amazing-APP-for-Torre-ed86b39f878449e0aec4e5d230acbca9" class="w-16 text-gray-300 hover:bg-gray-900 hover:text-white px-3 py-2 text-xs font-sm text-center" target="_blank">
                   <i class="block fas fa-book text-lg" />
@@ -27,20 +27,18 @@
                 </a>
               </div>
             </div>
-            <div class="ml-3 relative">
-              <div>
-                <button type="button" class="bg-gray-800 flex text-sm rounded-full outline-none ring-2 ring-offset-1 ring-offset-gray-800 ring-gray-500 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="openTorre()">
-                  <img class="h-10 w-10 rounded-full" :src="user ? user.person.picture : null" alt="">
-                </button>
-              </div>
+            <div class="ml-3 relative hidden-s">
+              <button type="button" class="bg-gray-800 flex text-sm rounded-full outline-none ring-2 ring-offset-1 ring-offset-gray-800 ring-gray-500 focus:ring-white" aria-expanded="false" aria-haspopup="true" @click="openTorre()">
+                <img class="h-10 w-10 rounded-full" :src="user ? user.person.picture : null" alt="">
+              </button>
             </div>
           </div>
         </div>
       </div>
     </nav>
     <div class="">
-      <Search v-if="show == 'Search'" @sendUsername="gotoUser($event)" />
-      <Genome v-if="show == 'User'" :username="username" @back="back()" />
+      <Search v-if="show == 'Search'" @sendUsername="gotoUser($event)" @newalert="pushAlert($event)" />
+      <Genome v-if="show == 'User'" :username="username" @back="back()" @newalert="pushAlert($event)" />
       <Data v-if="show == 'Data' " @back="back()" @newalert="pushAlert($event)" />
     </div>
     <div v-if="alerts" class="transition duration-700 absolute p-5 top-32 right-0">
@@ -137,6 +135,9 @@ export default {
     -webkit-animation: fadein 1s; /* Safari and Chrome */
     -o-animation: fadein 1s; /* Opera */
   }
+  .border-green{
+    border-color: #cddc39;
+  }
   @keyframes fadein {
     from {
         opacity:0;
@@ -167,6 +168,11 @@ export default {
     }
     to {
         opacity: 1;
+    }
+  }
+  @media (max-width: 410px) {
+    .hidden-s {
+      display:none;
     }
   }
 </style>
