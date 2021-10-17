@@ -50,9 +50,11 @@ class UserController extends Controller
         return json_decode($data, true);
     }
 
-    public function searchPeopleFromTorre($params)
+    public function searchPeopleFromTorre($params, Request $request)
     {
-        $data = $this->apiSearchTorre->post('people/_search?'.$params)->getBody();
+        $name = $request->input('name');
+        $data = $this->apiSearchTorre->post('people/_search?'.$params, ['json' => ['name' => ['term' => $name]]])->getBody();
+        
         return json_decode($data, true);
     }
 
